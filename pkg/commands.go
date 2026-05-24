@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"archive/zip"
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"bufio"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -79,18 +79,7 @@ func Execute(rootCmd *cobra.Command, configFile string, tid string, defaultAPIAd
 		}
 	}
 
-	c.apiAddr = normalizeAPIAddr(c.apiAddr)
 	return rootCmd.Execute()
-}
-
-func normalizeAPIAddr(addr string) string {
-	if addr == "" {
-		return "http://127.0.0.1:9040"
-	}
-	if strings.HasPrefix(addr, "http://") || strings.HasPrefix(addr, "https://") {
-		return strings.TrimRight(addr, "/")
-	}
-	return "http://" + strings.TrimRight(addr, "/")
 }
 
 func (c *command) apiURL(parts ...string) string {

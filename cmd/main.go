@@ -28,7 +28,7 @@ func main() {
 		Short: "Manage your globally deployed Serverless LLM Functions on vivgrid.com from the command line",
 	}
 
-	err = pkg.Execute(rootCmd, configFile, tid, "http://127.0.0.1:9040")
+	err = pkg.Execute(rootCmd, configFile, tid, "https://hosting.vivgrid.com")
 	if err != nil {
 		fmt.Println("cmd error:", err)
 		os.Exit(1)

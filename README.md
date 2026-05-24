@@ -34,9 +34,8 @@ You can configure `yc` using a configuration file or command-line flags:
 
 **Configuration file** (`yc.yml`):
 ```yaml
-api: http://127.0.0.1:9040
 secret: your_app_secret
-tool: my_llm_function_tool
+tool: my_first_llm_tool
 ```
 
 **Environment variable for config file location**:
@@ -46,9 +45,9 @@ export YC_CONFIG_FILE=/path/to/your/yc.yml
 
 ### Global Flags
 
-- `--api string`: REST API endpoint (default "http://127.0.0.1:9040")
 - `--secret string`: App secret for authentication
-- `--tool string`: Serverless LLM Function name (default "my_first_llm_tool")
+- `--tool string`: Serverless LLM Function name (Optional, default "my_first_llm_tool")
+- `--api string`: REST API endpoint (Optional, default "https://hosting.vivgrid.com")
 
 ### Commands
 
