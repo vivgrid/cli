@@ -34,11 +34,8 @@ You can configure `yc` using a configuration file or command-line flags:
 
 **Configuration file** (`yc.yml`):
 ```yaml
-zipper: zipper.vivgrid.com  # Port 9000 will be added automatically
-# OR specify custom port:
-# zipper: zipper.vivgrid.com:8080
 secret: your_app_secret
-tool: my_llm_function_tool
+tool: my_first_llm_tool
 ```
 
 **Environment variable for config file location**:
@@ -48,30 +45,9 @@ export YC_CONFIG_FILE=/path/to/your/yc.yml
 
 ### Global Flags
 
-- `--zipper string`: Zipper address - can be a domain (port 9000 added automatically) or domain:port (default "zipper.vivgrid.com")
 - `--secret string`: App secret for authentication
-- `--tool string`: Serverless LLM Function name (default "my_first_llm_tool")
-
-### Zipper Address Format
-
-The zipper address can be specified in two formats:
-
-1. **Domain only** (recommended): `zipper.vivgrid.com`
-   - Port 9000 will be added automatically
-   - Examples: `localhost`, `example.com`, `my-server.local`
-
-2. **Domain with custom port**: `zipper.vivgrid.com:8080`
-   - Use when you need a non-standard port
-   - Examples: `localhost:3000`, `example.com:8080`
-
-```bash
-# These are equivalent:
-yc --zipper zipper.vivgrid.com status
-yc --zipper zipper.vivgrid.com:9000 status
-
-# Custom port:
-yc --zipper localhost:8080 status
-```
+- `--tool string`: Serverless LLM Function name (Optional, default "my_first_llm_tool")
+- `--api string`: REST API endpoint (Optional, default "https://hosting.vivgrid.com")
 
 ### Commands
 
