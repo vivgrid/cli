@@ -119,6 +119,12 @@ func (c *command) doStream(req *http.Request) error {
 	s := bufio.NewScanner(resp.Body)
 	for s.Scan() {
 		line := s.Text()
+		if strings.HasPrefix(line, ":") {
+			continue
+		}
+		if strings.HasPrefix(line, "event: end") {
+			return nil
+		}
 		if strings.HasPrefix(line, "data:") {
 			fmt.Println(strings.TrimSpace(strings.TrimPrefix(line, "data:")))
 			continue
@@ -127,7 +133,10 @@ func (c *command) doStream(req *http.Request) error {
 			fmt.Println(line)
 		}
 	}
-	return s.Err()
+	if err := s.Err(); err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+	return nil
 }
 
 func (c *command) addDocCmd(rootCmd *cobra.Command) {
