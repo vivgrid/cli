@@ -119,6 +119,9 @@ func (c *command) doStream(req *http.Request) error {
 	s := bufio.NewScanner(resp.Body)
 	for s.Scan() {
 		line := s.Text()
+		if strings.HasPrefix(line, ":") {
+			continue
+		}
 		if strings.HasPrefix(line, "data:") {
 			fmt.Println(strings.TrimSpace(strings.TrimPrefix(line, "data:")))
 			continue
