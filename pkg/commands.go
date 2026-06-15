@@ -122,6 +122,9 @@ func (c *command) doStream(req *http.Request) error {
 		if strings.HasPrefix(line, ":") {
 			continue
 		}
+		if strings.HasPrefix(line, "event: end") {
+			return nil
+		}
 		if strings.HasPrefix(line, "data:") {
 			fmt.Println(strings.TrimSpace(strings.TrimPrefix(line, "data:")))
 			continue
