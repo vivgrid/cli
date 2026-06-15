@@ -127,7 +127,10 @@ func (c *command) doStream(req *http.Request) error {
 			fmt.Println(line)
 		}
 	}
-	return s.Err()
+	if err := s.Err(); err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+	return nil
 }
 
 func (c *command) addDocCmd(rootCmd *cobra.Command) {
