@@ -1,5 +1,5 @@
-// Package yc provides access to the documentation for the CLI commands
-package yc
+// Package cli provides access to the documentation for the CLI commands
+package cli
 
 import (
 	"embed"
@@ -14,10 +14,10 @@ var docs embed.FS
 // Doc retrieves the documentation for a specific command
 func Doc(cmd string) (string, error) {
 	if cmd == "" {
-		cmd = "yc"
+		cmd = "viv"
 	}
-	if !strings.HasPrefix(cmd, "yc") {
-		cmd = "yc " + cmd
+	if !strings.HasPrefix(cmd, "viv") {
+		cmd = "viv " + cmd
 	}
 
 	doc := strings.ReplaceAll(cmd, " ", "_")
@@ -26,8 +26,8 @@ func Doc(cmd string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to read documentation for command %s: %w", cmd, err)
 	}
-	// add example.md content if the command is "yc"
-	if cmd == "yc" {
+	// add example.md content if the command is "viv"
+	if cmd == "viv" {
 		doc = "docs/example.md"
 		example, err := docs.ReadFile(doc)
 		if err != nil {
@@ -35,6 +35,6 @@ func Doc(cmd string) (string, error) {
 		}
 		content = append(content, example...)
 	}
-	slog.Info("yc documentation", "command", cmd, "doc", doc)
+	slog.Info("viv documentation", "command", cmd, "doc", doc)
 	return string(content), nil
 }

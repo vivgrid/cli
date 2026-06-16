@@ -1,6 +1,6 @@
 .PHONY: build
 build:
-		go build -o bin/yc ./cmd
+		go build -o bin/viv ./cmd
 
 .PHONY: clean
 clean:
@@ -8,4 +8,4 @@ clean:
 
 .PHONY: doc
 doc: build
-	bin/yc doc
+	bin/viv doc

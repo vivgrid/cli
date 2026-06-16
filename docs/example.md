@@ -1,6 +1,6 @@
 ### Example
 
-You can create a `yc.yml` file in the root of your project to configure the deployment settings.
+You can create a `vivgrid.yml` file in the root of your project to configure the deployment settings.
 
 ```yaml
 zipper: zipper.vivgrid.com # Port 9000 will be added automatically

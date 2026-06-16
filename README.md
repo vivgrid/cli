@@ -1,4 +1,4 @@
-# yc
+# viv
 
 The command line client for [Vivgrid](https://vivgrid.com), the Enterprise-grade AI Agent Platform.
 
@@ -7,7 +7,7 @@ The command line client for [Vivgrid](https://vivgrid.com), the Enterprise-grade
 Install the compiled binary:
 
 ```sh
-curl "https://bina.egoist.dev/vivgrid/yc" | sh
+curl "https://bina.egoist.dev/vivgrid/cli" | sh
 ```
 
 ## Build from source:
@@ -15,24 +15,24 @@ curl "https://bina.egoist.dev/vivgrid/yc" | sh
 ```sh
 make
 
-sudo cp ./bin/yc /usr/local/bin/
+sudo cp ./bin/viv /usr/local/bin/
 ```
 
 ## Usage
 
 ```
-yc --help
+viv --help
 ```
 
 ### Overview
 
-The `yc` CLI tool allows you to manage globally deployed Serverless LLM Functions on [Vivgrid](https://vivgrid.com). It provides a complete workflow for developing, deploying, and monitoring LLM Tools in serverless.
+The `viv` CLI tool allows you to manage globally deployed Serverless LLM Functions on [Vivgrid](https://vivgrid.com). It provides a complete workflow for developing, deploying, and monitoring LLM Tools in serverless.
 
 ### Configuration
 
-You can configure `yc` using a configuration file or command-line flags:
+You can configure `viv` using a configuration file or command-line flags:
 
-**Configuration file** (`yc.yml`):
+**Configuration file** (`vivgrid.yml`):
 ```yaml
 secret: your_app_secret
 tool: my_first_llm_tool
@@ -40,7 +40,7 @@ tool: my_first_llm_tool
 
 **Environment variable for config file location**:
 ```bash
-export YC_CONFIG_FILE=/path/to/your/yc.yml
+export VIV_CONFIG_FILE=/path/to/your/vivgrid.yml
 ```
 
 ### Global Flags
@@ -53,17 +53,17 @@ export YC_CONFIG_FILE=/path/to/your/yc.yml
 
 #### General Commands
 
-##### `yc deploy <source>`
+##### `viv deploy <source>`
 
 One-command deployment that chains: upload → remove → create
 
 **Examples:**
 ```bash
 # Deploy current directory
-yc deploy .
+viv deploy .
 ```
 
-##### `yc upload <source>`
+##### `viv upload <source>`
 
 Upload and compile your source code to the vivgrid platform.
 
@@ -75,7 +75,7 @@ Upload and compile your source code to the vivgrid platform.
 **Examples:**
 ```bash
 # Upload a directory (auto-zips with exclusions)
-yc upload ./my-function-dir
+viv upload ./my-function-dir
 ```
 
 **Auto-exclusions when uploading directories:**
@@ -90,38 +90,38 @@ yc upload ./my-function-dir
 
 #### Deployment Management
 
-##### `yc create`
+##### `viv create`
 
 Create and start a serverless deployment from previously uploaded code.
 
 **Examples:**
 ```bash
 # Create deployment
-yc create
+viv create
 
 # Create with environment variables
-yc create --env DATABASE_URL=postgres://... --env API_KEY=secret
+viv create --env DATABASE_URL=postgres://... --env API_KEY=secret
 ```
 
 **Flags:**
 - `--env key=value`: Set environment variables (can be used multiple times)
 
-##### `yc remove`
+##### `viv remove`
 
 Delete the current serverless deployment.
 
 ```bash
-yc remove
+viv remove
 ```
 
 #### Monitoring & Observability
 
-##### `yc status`
+##### `viv status`
 
 Show the current status of your serverless deployment.
 
 ```bash
-yc status
+viv status
 ```
 
 **Output includes:**
@@ -129,12 +129,12 @@ yc status
 - Start time
 - Global deployments
 
-##### `yc logs`
+##### `viv logs`
 
 Observe serverless logs in real-time.
 
 ```bash
-yc logs
+viv logs
 ```
 
 **Flags:**
@@ -142,12 +142,12 @@ yc logs
 
 #### Utility Commands
 
-##### `yc version`
+##### `viv version`
 
-Show the current version of the yc CLI tool.
+Show the current version of the viv CLI tool.
 
 ```bash
-yc version
+viv version
 ```
 
 ## Docs

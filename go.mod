@@ -1,4 +1,4 @@
-module github.com/vivgrid/yc
+module github.com/vivgrid/cli
 
 go 1.26
 
