@@ -26,6 +26,25 @@ type command struct {
 	envs    []string
 }
 
+// checkResult parses a JSON `{"ok":bool,"error":string}` API response and
+// turns a non-ok result into an error, so callers don't print raw bodies.
+func checkResult(res []byte) error {
+	var r struct {
+		Ok    bool   `json:"ok"`
+		Error string `json:"error"`
+	}
+	if err := json.Unmarshal(res, &r); err != nil {
+		return fmt.Errorf("unexpected response: %s", strings.TrimSpace(string(res)))
+	}
+	if !r.Ok {
+		if r.Error != "" {
+			return errors.New(r.Error)
+		}
+		return errors.New("request failed")
+	}
+	return nil
+}
+
 func parseEnvs(values []string) (map[string]string, error) {
 	if len(values) == 0 {
 		return map[string]string{}, nil
@@ -43,6 +62,11 @@ func parseEnvs(values []string) (map[string]string, error) {
 
 func Execute(rootCmd *cobra.Command, configFile string, tid string, defaultAPIAddr string) error {
 	c := &command{tid: tid}
+
+	// Runtime failures (e.g. a failed build) are reported by main; don't let
+	// cobra also dump the usage text and a duplicate error on every error.
+	rootCmd.SilenceUsage = true
+	rootCmd.SilenceErrors = true
 
 	rootCmd.PersistentFlags().StringVar(&c.apiAddr, "api", defaultAPIAddr, "REST API endpoint")
 	rootCmd.PersistentFlags().StringVar(&c.secret, "secret", "", "app secret")
@@ -117,24 +141,40 @@ func (c *command) doStream(req *http.Request) error {
 	}
 
 	s := bufio.NewScanner(resp.Body)
+	failed := false
 	for s.Scan() {
 		line := s.Text()
 		if strings.HasPrefix(line, ":") {
 			continue
 		}
 		if strings.HasPrefix(line, "event: end") {
+			if failed {
+				return errors.New("build failed")
+			}
 			return nil
 		}
-		if strings.HasPrefix(line, "data:") {
-			fmt.Println(strings.TrimSpace(strings.TrimPrefix(line, "data:")))
+		if strings.HasPrefix(line, "event: error") {
+			failed = true
 			continue
 		}
-		if line != "" {
-			fmt.Println(line)
+		text := line
+		if strings.HasPrefix(line, "data:") {
+			text = strings.TrimSpace(strings.TrimPrefix(line, "data:"))
+		}
+		if text != "" {
+			fmt.Println(text)
+		}
+		// The build server streams compile failures as plain text and then
+		// closes the stream normally, so detect the failure marker here.
+		if strings.Contains(text, "command failed") {
+			failed = true
 		}
 	}
 	if err := s.Err(); err != nil && !errors.Is(err, io.EOF) {
 		return err
+	}
+	if failed {
+		return errors.New("build failed")
 	}
 	return nil
 }
@@ -247,8 +287,7 @@ func (c *command) addCreateCmd(rootCmd *cobra.Command) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		fmt.Print(string(res))
-		return nil
+		return checkResult(res)
 	}}
 	rootCmd.AddCommand(cmd)
 	cmd.Flags().StringArrayVar(&c.envs, "env", nil, "Set environment variable as key=value")
@@ -265,8 +304,7 @@ func (c *command) addRemoveCmd(rootCmd *cobra.Command) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		fmt.Print(string(res))
-		return nil
+		return checkResult(res)
 	}, GroupID: groupIDDeployment}
 	rootCmd.AddCommand(cmd)
 	return cmd
@@ -294,11 +332,18 @@ func (c *command) addLogsCmd(rootCmd *cobra.Command) {
 }
 
 func (c *command) addDeployCmd(rootCmd *cobra.Command, uploadCmd *cobra.Command, removeCmd *cobra.Command, createCmd *cobra.Command) {
-	deployCmd := &cobra.Command{Use: "deploy src_file[.go|.zip|dir]", Short: "Deploy your serverless, this is an alias of chaining commands (upload -> remove -> create)", Args: cobra.ExactArgs(1), Run: func(cmd *cobra.Command, args []string) {
-		uploadCmd.RunE(uploadCmd, args)
-		removeCmd.RunE(removeCmd, nil)
-		createCmd.RunE(createCmd, nil)
+	deployCmd := &cobra.Command{Use: "deploy src_file[.go|.zip|dir]", Short: "Deploy your serverless, this is an alias of chaining commands (upload -> remove -> create)", Args: cobra.ExactArgs(1), RunE: func(cmd *cobra.Command, args []string) error {
+		if err := uploadCmd.RunE(uploadCmd, args); err != nil {
+			return err
+		}
+		if err := removeCmd.RunE(removeCmd, nil); err != nil {
+			return err
+		}
+		if err := createCmd.RunE(createCmd, nil); err != nil {
+			return err
+		}
 		fmt.Println("Successfully!")
+		return nil
 	}, GroupID: groupIDGeneral}
 	rootCmd.AddCommand(deployCmd)
 	deployCmd.Flags().StringArrayVar(&c.envs, "env", nil, "Set environment variables as key=value")
