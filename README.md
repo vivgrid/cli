@@ -7,7 +7,7 @@ The command line client for [Vivgrid](https://vivgrid.com), the Enterprise-grade
 Install the compiled binary:
 
 ```sh
-curl "https://bina.egoist.dev/vivgrid/cli" | sh
+curl "https://bina.egoist.dev/vivgrid/cli?file=viv" | sh
 ```
 
 ## Build from source:
