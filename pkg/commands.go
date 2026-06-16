@@ -294,13 +294,14 @@ func (c *command) addLogsCmd(rootCmd *cobra.Command) {
 }
 
 func (c *command) addDeployCmd(rootCmd *cobra.Command, uploadCmd *cobra.Command, removeCmd *cobra.Command, createCmd *cobra.Command) {
-	rootCmd.AddCommand(&cobra.Command{Use: "deploy src_file[.go|.zip|dir]", Short: "Deploy your serverless, this is an alias of chaining commands (upload -> remove -> create)", Args: cobra.ExactArgs(1), Run: func(cmd *cobra.Command, args []string) {
+	deployCmd := &cobra.Command{Use: "deploy src_file[.go|.zip|dir]", Short: "Deploy your serverless, this is an alias of chaining commands (upload -> remove -> create)", Args: cobra.ExactArgs(1), Run: func(cmd *cobra.Command, args []string) {
 		uploadCmd.RunE(uploadCmd, args)
 		removeCmd.RunE(removeCmd, nil)
 		createCmd.RunE(createCmd, nil)
 		fmt.Println("Successfully!")
-	}, GroupID: groupIDGeneral})
-	rootCmd.Flags().StringArrayVar(&c.envs, "env", nil, "Set environment variables as key=value")
+	}, GroupID: groupIDGeneral}
+	rootCmd.AddCommand(deployCmd)
+	deployCmd.Flags().StringArrayVar(&c.envs, "env", nil, "Set environment variables as key=value")
 }
 
 const (
