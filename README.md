@@ -137,9 +137,6 @@ Observe serverless logs in real-time.
 viv logs
 ```
 
-**Flags:**
-- `--tail int`: Number of log lines to tail (default 20)
-
 #### Utility Commands
 
 ##### `viv version`
