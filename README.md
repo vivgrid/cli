@@ -7,7 +7,7 @@ The command line client for [Vivgrid](https://vivgrid.com), the Enterprise-grade
 Install the compiled binary:
 
 ```sh
-curl "https://bina.egoist.dev/vivgrid/cli?file=viv" | sh
+curl "https://bina.egoist.dev/vivgrid/cli?file=viv&name=viv" | sh
 ```
 
 ## Build from source:
@@ -136,9 +136,6 @@ Observe serverless logs in real-time.
 ```bash
 viv logs
 ```
-
-**Flags:**
-- `--tail int`: Number of log lines to tail (default 20)
 
 #### Utility Commands
 
